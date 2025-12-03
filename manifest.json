@@ -1,0 +1,13 @@
+{
+  "name": "THAC0 Roller",
+  "version": "1.0.0",
+  "manifest_version": 1,
+  "icon": "/icon.svg", 
+  "action": {
+    "title": "Rzut na THAC0",
+    "icon": "/icon.svg",
+    "popover": "/",
+    "width": 300,
+    "height": 400
+  }
+}
