@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>THAC0 Roller</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 16px;
+      background: #f0f0f0;
+    }
+    .box {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      width: 260px;
+    }
+    input {
+      width: 100%;
+      padding: 6px;
+      margin: 6px 0;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>THAC0 Roller</h2>
+
+    <label>THAC0 atakującego:</label>
+    <input id="thac0" type="number" value="20">
+
+    <label>Modyfikator ataku (np. siła, bonusy):</label>
+    <input id="mod" type="number" value="0">
+
+    <button id="roll">RZUĆ</button>
+
+    <p id="result"></p>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
