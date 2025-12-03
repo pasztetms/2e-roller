@@ -1,50 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-  <script src="https://unpkg.com/@owlbear-rodeo/sdk@2.0.0/dist/index.js"></script>
-  <meta charset="UTF-8">
-  <title>THAC0 Roller</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 16px;
-      background: #f0f0f0;
-    }
-    .box {
-      background: white;
-      padding: 16px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      width: 260px;
-    }
-    input {
-      width: 100%;
-      padding: 6px;
-      margin: 6px 0;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 12px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THAC0 Roller</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            margin: 5px 0;
+            width: 80%;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+        button {
+            background-color: #d32f2f; /* Czerwony kolor D&D */
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #b71c1c;
+        }
+        .wynik {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-  <div class="box">
-    <h2>THAC0 Roller</h2>
 
-    <label>THAC0 atakującego:</label>
-    <input id="thac0" type="number" value="20">
+    <h2>⚔️ THAC0 Roller</h2>
+    
+    <label>Twoje THAC0</label>
+    <input type="number" id="thac0-input" value="20" placeholder="np. 18">
 
-    <label>Modyfikator ataku (np. siła, bonusy):</label>
-    <input id="mod" type="number" value="0">
+    <label>Modyfikator (Siła/Magia)</label>
+    <input type="number" id="mod-input" value="0" placeholder="np. 1">
 
-    <button id="roll">RZUĆ</button>
+    <button id="roll-btn">RZUĆ ATADEM!</button>
 
-    <p id="result"></p>
-  </div>
+    <div id="local-result" class="wynik"></div>
 
-  <script type="module" src="script.js"></script>
+    <script src="https://unpkg.com/@owlbear-rodeo/sdk@2.0.0/dist/index.js"></script>
+
+    <script>
+        // Ta funkcja uruchamia się, gdy OBR jest gotowy
+        OBR.onReady(async () => {
+            
+            // Znajdujemy elementy na stronie
+            const btn = document.getElementById('roll-btn');
+            const thac0Input = document.getElementById('thac0-input');
+            const modInput = document.getElementById('mod-input');
+            const resultDiv = document.getElementById('local-result');
+
+            // Co się dzieje po kliknięciu przycisku
+            btn.addEventListener('click', async () => {
+                
+                // Pobieramy wartości (jeśli puste, przyjmujemy 0 lub 20)
+                const thac0 = parseInt(thac0Input.value) || 20;
+                const mod = parseInt(modInput.value) || 0;
+
+                // Rzut k20
+                const d20 = Math.floor(Math.random() * 20) + 1;
+
+                // Matematyka AD&D 2e:
+                // AC jakie trafiasz = THAC0 - (Rzut + Modyfikatory)
+                const totalHit = d20 + mod;
+                const hitAC = thac0 - totalHit;
+
+                // Specjalne komunikaty dla 1 i 20
+                let extraText = "";
+                if (d20 === 20) extraText = " (KRYTYK!)";
+                if (d20 === 1) extraText = " (PUDŁO!)";
+
+                // Tekst, który zobaczą wszyscy
+                const notificationMessage = `Rzut THAC0: [${d20}]+${mod}. Trafia AC: ${hitAC} ${extraText}`;
+
+                // Wyświetl wynik u siebie w okienku
+                resultDiv.innerText = `Rzut: ${d20} (+${mod})\nTrafiasz AC: ${hitAC}`;
+
+                // Wyślij powiadomienie do Owlbear Rodeo (dymek na górze ekranu)
+                if (OBR.notification) {
+                    await OBR.notification.show(notificationMessage);
+                } else {
+                    console.log("Jesteś poza OBR, ale wynik to:", notificationMessage);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
