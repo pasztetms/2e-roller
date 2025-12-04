@@ -2,11 +2,11 @@
   "name": "2e Roller",
   "version": "1.0.0",
   "manifest_version": 1,
-  "author": "Twoje Imię",
+  "author": "PasztetMS",
   "action": {
     "title": "2e Roller",
     "icon": "/icon.svg",
-    "popover": "/",
+    "popover": "/index.html",
     "width": 380,
     "height": 520
   }
