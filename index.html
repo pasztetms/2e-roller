@@ -1,117 +1,35 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THAC0 Roller</title>
-<style>
-  body {
-    margin: 0;
-    padding: 16px;
-    font-family: system-ui, Segoe UI, Roboto, Arial;
-    background: #f7f7f7;
-  }
-  h2 {
-    margin-top: 0;
-  }
-  label { display: block; margin-top: 10px; }
-  input[type=number], input[type=range] {
-    margin-top: 4px;
-    padding: 4px;
-  }
-  button {
-    margin-top: 16px;
-    padding: 8px 16px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  /* Modal */
-  #rollModal {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.98);
-    min-width: 260px;
-    max-width: 90%;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    background: white;
-    z-index: 9999;
-    display: none;
-  }
-  #rollModal strong {
-    font-size: 20px;
-  }
-  #rollResult {
-    font-size: 28px;
-    font-weight: 700;
-    text-align: center;
-    padding: 12px 0;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>AD&D 2e Roller</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #222;
+      color: #eee;
+      text-align: center;
+      padding: 2rem;
+    }
+    button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 2rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
-
 <body>
-  <h2>⚔️ THAC0 Roller</h2>
+  <h1>AD&D 2e Roller 🎲</h1>
+  <p>Kliknij, aby rzucić k20</p>
+  <button id="rollButton">Rzuć!</button>
+  <div id="result"></div>
 
-  <label>
-    THAC0: <span id="thac0Val">20</span>
-    <input id="thac0" type="range" min="1" max="20" value="20" oninput="document.getElementById('thac0Val').textContent=this.value">
-  </label>
-
-  <label>
-    Modyfikator:
-    <input id="modifier" type="number" value="0" style="width:70px;">
-  </label>
-
-  <button onclick="rollThac0()">🎲 Rzut</button>
-
-  <!-- Modal -->
-  <div id="rollModal" aria-hidden="true">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <strong>Wynik rzutu</strong>
-      <button onclick="hideModal()" aria-label="Zamknij">✕</button>
-    </div>
-
-    <div id="rollResult"></div>
-
-    <div style="text-align:center; margin-top:12px;">
-      <button onclick="hideModal()">OK</button>
-    </div>
-  </div>
-
-<script>
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function showModal(text) {
-  const m = document.getElementById('rollModal');
-  const r = document.getElementById('rollResult');
-  r.textContent = text;
-  m.style.display = 'block';
-  m.setAttribute('aria-hidden','false');
-}
-
-function hideModal() {
-  const m = document.getElementById('rollModal');
-  m.style.display = 'none';
-  m.setAttribute('aria-hidden','true');
-}
-
-function rollThac0() {
-  const thac0 = parseInt(document.getElementById('thac0').value);
-  const mod = parseInt(document.getElementById('modifier').value) || 0;
-  const d20 = randInt(1, 20);
-
-  const totalAttack = d20 + mod;
-  const result = thac0 - totalAttack;
-
-  const text = `THAC0 ${thac0} − (${d20} ${mod>=0?'+':''}${mod}) = ${result}`;
-  showModal(text);
-}
-</script>
-
+  <script type="module" src="script.js"></script>
 </body>
 </html>
