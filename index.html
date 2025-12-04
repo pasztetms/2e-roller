@@ -1,107 +1,85 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2e Roller</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #222;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        input {
-            padding: 10px;
-            margin: 5px 0;
-            width: 80%;
-            border-radius: 5px;
-            border: 1px solid #444;
-        }
-        button {
-            background-color: #d32f2f; /* Czerwony kolor D&D */
-            color: white;
-            padding: 12px;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #b71c1c;
-        }
-        .wynik {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffeb3b;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THAC0 Roller</title>
+<style>
+  body {
+    margin: 0;
+    padding: 16px;
+    font-family: system-ui, Segoe UI, Roboto, Arial;
+    background: #f7f7f7;
+  }
+  h2 {
+    margin-top: 0;
+  }
+  label { display: block; margin-top: 10px; }
+  input[type=number], input[type=range] {
+    margin-top: 4px;
+    padding: 4px;
+  }
+  button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  /* Modal */
+  #rollModal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.98);
+    min-width: 260px;
+    max-width: 90%;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    background: white;
+    z-index: 9999;
+    display: none;
+  }
+  #rollModal strong {
+    font-size: 20px;
+  }
+  #rollResult {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    padding: 12px 0;
+  }
+</style>
 </head>
+
 <body>
-
-    <h2>⚔️ 2e Roller</h2>
-    
-    <label>Twoje THAC0</label>
-    <input type="number" id="thac0-input" value="20" placeholder="np. 18">
-
-    <label>Modyfikator (Siła/Zręczność/Magia)</label>
-    <input type="number" id="mod-input" value="0" placeholder="np. 1">
-
-    <button id="roll-btn">RZUT</button>
-
-    <div id="local-result" class="wynik"></div>
-
-    <div style="padding:12px; font-family:system-ui,Segoe UI,Roboto,Arial;">
-  <h2>⚔️ 2e Roller</h2>
+  <h2>⚔️ THAC0 Roller</h2>
 
   <label>
-    Modifier:
-    <input id="modifier" type="number" value="0" style="width:64px" />
+    THAC0: <span id="thac0Val">20</span>
+    <input id="thac0" type="range" min="1" max="20" value="20" oninput="document.getElementById('thac0Val').textContent=this.value">
   </label>
-  <button id="rollBtn" onclick="rollD20()">Rzuć d20</button>
 
-  <div style="margin-top:8px;">
-    <small>Wynik pojawi się w okienku.</small>
-  </div>
-</div>
+  <label>
+    Modyfikator:
+    <input id="modifier" type="number" value="0" style="width:70px;">
+  </label>
 
-<!-- Modal z wynikiem -->
-<div id="rollModal" aria-hidden="true" style="
-    position:fixed;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%) scale(0.98);
-    min-width:260px;
-    max-width:90%;
-    padding:16px;
-    border-radius:12px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.25);
-    background: white;
-    z-index:9999;
-    display:none;
-">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-    <strong>Wynik rzutu</strong>
-    <button onclick="hideModal()" aria-label="Zamknij">✕</button>
-  </div>
+  <button onclick="rollThac0()">🎲 Rzut</button>
 
-  <div id="rollResult" style="font-size:28px; font-weight:700; text-align:center; padding:12px 0;">
-    <!-- wynik tutaj -->
-  </div>
+  <!-- Modal -->
+  <div id="rollModal" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <strong>Wynik rzutu</strong>
+      <button onclick="hideModal()" aria-label="Zamknij">✕</button>
+    </div>
 
-  <div style="text-align:center; margin-top:12px;">
-    <button onclick="hideModal()">OK</button>
+    <div id="rollResult"></div>
+
+    <div style="text-align:center; margin-top:12px;">
+      <button onclick="hideModal()">OK</button>
+    </div>
   </div>
-</div>
 
 <script>
 function randInt(min, max) {
@@ -122,67 +100,18 @@ function hideModal() {
   m.setAttribute('aria-hidden','true');
 }
 
-function rollD20() {
-  try {
-    const mod = parseInt(document.getElementById('modifier').value) || 0;
-    const die = randInt(1,20);
-    const total = die + mod;
-    const text = `d20: ${die} ${mod>=0?'+':''}${mod} = ${total}`;
-    showModal(text);
+function rollThac0() {
+  const thac0 = parseInt(document.getElementById('thac0').value);
+  const mod = parseInt(document.getElementById('modifier').value) || 0;
+  const d20 = randInt(1, 20);
 
-    // opcjonalnie: wysyłanie komunikatu do parent (Owlbear) — zobacz niżej
-    // window.parent.postMessage({ type: '2eRoll', die, mod, total }, '*');
-  } catch (e) {
-    showModal('Błąd: ' + e.message);
-  }
+  const totalAttack = d20 + mod;
+  const result = thac0 - totalAttack;
+
+  const text = `THAC0 ${thac0} − (${d20} ${mod>=0?'+':''}${mod}) = ${result}`;
+  showModal(text);
 }
 </script>
 
-    <script src="https://unpkg.com/@owlbear-rodeo/sdk@2.0.0/dist/index.js"></script>
-
-    <script>
-        OBR.onReady(async () => {
-            
-            // Znajdujemy elementy na stronie
-            const btn = document.getElementById('roll-btn');
-            const thac0Input = document.getElementById('thac0-input');
-            const modInput = document.getElementById('mod-input');
-            const resultDiv = document.getElementById('local-result');
-
-            // Co się dzieje po kliknięciu przycisku
-            btn.addEventListener('click', async () => {
-                
-                // Pobieramy wartości (jeśli puste, przyjmujemy 0 lub 20)
-                const thac0 = parseInt(thac0Input.value) || 20;
-                const mod = parseInt(modInput.value) || 0;
-
-                // Rzut k20
-                const d20 = Math.floor(Math.random() * 20) + 1;
-
-                // Matematyka AD&D 2e:
-                // AC jakie trafiasz = THAC0 - (Rzut + Modyfikatory)
-                const totalHit = d20 + mod;
-                const hitAC = thac0 - totalHit;
-
-                // Specjalne komunikaty dla 1 i 20
-                let extraText = "";
-                if (d20 === 20) extraText = " (KRYTYK!)";
-                if (d20 === 1) extraText = " (PUDŁO!)";
-
-                // Tekst, który zobaczą wszyscy
-                const notificationMessage = `Rzut THAC0: [${d20}]+${mod}. Trafia AC: ${hitAC} ${extraText}`;
-
-                // Wyświetl wynik u siebie w okienku
-                resultDiv.innerText = `Rzut: ${d20} (+${mod})\nTrafiasz AC: ${hitAC}`;
-
-                // Wyślij powiadomienie do Owlbear Rodeo (dymek na górze ekranu)
-                if (OBR.notification) {
-                    await OBR.notification.show(notificationMessage);
-                } else {
-                    console.log("Jesteś poza OBR, ale wynik to:", notificationMessage);
-                }
-            });
-        });
-    </script>
 </body>
 </html>
