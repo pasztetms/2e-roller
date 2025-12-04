@@ -1,43 +1,26 @@
-import { OBR } from "https://cdn.owlbear.rodeo/v1/OBR.min.js";
+import OBR from "https://unpkg.com/@owlbear-rodeo/sdk";
 
-<script type="module">
-  import OBR from "https://unpkg.com/@owlbear-rodeo/sdk";
+// Funkcja do rzutu k20
+function rollD20() {
+  return Math.floor(Math.random() * 20) + 1;
+}
 
-  // Po załadowaniu rozszerzenia
-  OBR.onReady(async () => {
-    console.log("AD&D 2e Roller gotowy!");
+OBR.onReady(async () => {
+  console.log("AD&D 2e Roller gotowy!");
 
-    // Przykład: wysłanie wiadomości do wszystkich graczy
-    document.getElementById("rollButton").addEventListener("click", async () => {
-      const result = Math.floor(Math.random() * 20) + 1;
-      await OBR.broadcast.sendMessage("2e-roller", { roll: result });
-    });
+  const rollButton = document.getElementById("rollButton");
+  const resultDiv = document.getElementById("result");
 
-    // Odbieranie wiadomości
-    OBR.broadcast.onMessage("2e-roller", (message) => {
-      alert(`Gracz wyrzucił: ${message.data.roll}`);
-    });
+  rollButton.addEventListener("click", async () => {
+    const result = rollD20();
+    resultDiv.textContent = `Wynik: ${result}`;
+
+    // Wyślij wynik do wszystkich graczy w sesji
+    await OBR.broadcast.sendMessage("2e-roller", { roll: result });
   });
-</script>
 
-
-OBR.onReady(() => {
-  const btn = document.getElementById("roll");
-  const result = document.getElementById("result");
-
-  btn.addEventListener("click", () => {
-    const thac0 = parseInt(document.getElementById("thac0").value);
-    const mod = parseInt(document.getElementById("mod").value);
-
-    const roll = Math.floor(Math.random() * 20) + 1;
-    const acHit = thac0 - (roll + mod);
-
-    const text =
-      `Rzut: ${roll}  |  Modyfikator: ${mod}\n` +
-      `→ Trafiasz AC = ${acHit}`;
-
-    result.textContent = text.replace(/\n/g, "<br>");
-
-    OBR.notification.show(`Trafiasz AC ${acHit} (rzucono ${roll})`, "INFO");
+  // Odbieraj wyniki od innych graczy
+  OBR.broadcast.onMessage("2e-roller", (message) => {
+    alert(`Gracz wyrzucił: ${message.data.roll}`);
   });
 });
