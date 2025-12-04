@@ -1,13 +1,13 @@
 {
-  "name": "THAC0 Roller",
+  "name": "2e Roller",
   "version": "1.0.0",
   "manifest_version": 1,
-  "icon": "/icon.svg", 
+  "author": "Twoje Imię",
   "action": {
-    "title": "Rzut na THAC0",
+    "title": "2e Roller",
     "icon": "/icon.svg",
     "popover": "/",
-    "width": 300,
-    "height": 400
+    "width": 380,
+    "height": 520
   }
 }
