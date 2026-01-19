@@ -5,8 +5,6 @@ function rollD20() {
   return Math.floor(Math.random() * 20) + 1;
 }
 
-document.getElementById("resultBox").value = roll;
-
 OBR.onReady(async () => {
   console.log("AD&D 2e Roller gotowy!");
 
