@@ -74,41 +74,61 @@
       resultBox.value = `Rzut: ${roll} | Wynik: ${result}`;
     };
   </script>
-  
-  <h2>Logowanie</h2>
 
-  <div id="loginBox">
-    <input type="text" id="username" placeholder="Login">
-    <input type="password" id="password" placeholder="Hasło">
-    <button id="loginBtn">Zaloguj</button>
-  </div>
+  <h1>Thac0 Roller</h1>
 
-  <div id="app" style="display:none;">
-    <h1>Thac0 Roller</h1>
-    <!-- tu wklej resztę swojej strony -->
-  </div>
-  
-  <script>
-    const loginBox = document.getElementById("loginBox");
-    const app = document.getElementById("app");
-  
-    if (localStorage.getItem("loggedIn") === "true") {
-      loginBox.style.display = "none";
-      app.style.display = "block";
-    }
-  
-    document.getElementById("loginBtn").onclick = () => {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
-  
-      if (user === "admin" && pass === "1234") {
-        localStorage.setItem("loggedIn", "true");
-        loginBox.style.display = "none";
-        app.style.display = "block";
-      } else {
-        alert("Zły login lub hasło");
-      }
+  <input id="name" placeholder="Twoje imię"><br><br>
+
+  <input id="thac0" type="number" placeholder="Thac0">
+  <input id="strMod" type="number" placeholder="Mod siły">
+  <input id="otherMod" type="number" placeholder="Inne mody"><br><br>
+
+  <button id="rollBtn">Rzut</button>
+
+  <h2>Ostatnie rzuty:</h2>
+  <ul id="log"></ul>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "TU_WSTAW_CONFIG",
+      authDomain: "...",
+      databaseURL: "...",
+      projectId: "...",
+      storageBucket: "...",
+      messagingSenderId: "...",
+      appId: "..."
     };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const rollsRef = ref(db, "rolls");
+
+    document.getElementById("rollBtn").onclick = () => {
+      const name = document.getElementById("name").value || "Anon";
+      const thac0 = +document.getElementById("thac0").value || 0;
+      const str = +document.getElementById("strMod").value || 0;
+      const other = +document.getElementById("otherMod").value || 0;
+
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      const result = thac0 - (d20 + str + other);
+
+      push(rollsRef, {
+        name,
+        d20,
+        total: result,
+        time: Date.now()
+      });
+    };
+
+    onChildAdded(rollsRef, snap => {
+      const r = snap.val();
+      const li = document.createElement("li");
+      li.textContent = `${r.name} rzuca: ${r.d20} → wynik: ${r.total}`;
+      document.getElementById("log").prepend(li);
+    });
   </script>
   
 </body>
