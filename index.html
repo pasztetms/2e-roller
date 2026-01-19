@@ -29,12 +29,11 @@
   <p>Kliknij, aby rzucić k20</p>
   <button id="rollButton">Rzuć!</button>
   <div id="result">"resultBox"</div>
-
- <script>
-    document.getElementById("rollButton").addEventListener("click", function () {
+   <script>
+      document.getElementById("rollButton").addEventListener("click", function () {
       const roll = Math.floor(Math.random() * 20) + 1;
       document.getElementById("resultBox").textContent = "Wynik: " + roll;
-    });
-  </script>
+      });
+    </script>
 </body>
 </html>
