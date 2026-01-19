@@ -1,8 +1,7 @@
 {
-  "name": "2e Roller",
+  "name": "Thac0 Roller",
+  "description": "Kalkulator Thac0 jako panel",
   "version": "1.0.0",
-  "description": "Kostkowy roller dla 2nd Edition, integrujący się z Owlbear Rodeo.",
-  "icon": "icon.png",
-  "homepage_url": "https://pasztetms.github.io/2e-roller/",
-  "entry": "index.html"
+  "url": "https://pasztetms.github.io/2e-roller-2.0/",
+  "icon": "https://pasztetms.github.io/2e-roller-2.0/icon.png"
 }
